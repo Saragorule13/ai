@@ -1,0 +1,38 @@
+% ----------- PRIOR PROBABILITIES -----------
+
+prior(rain, 0.3).
+prior(no_rain, 0.7).
+
+% ----------- LIKELIHOODS -----------
+
+likelihood(cloudy, rain, 0.8).
+likelihood(cloudy, no_rain, 0.4).
+
+% ----------- BAYES THEOREM -----------
+
+% Calculate evidence P(E)
+evidence(E, P_E) :-
+    prior(rain, P_R),
+    prior(no_rain, P_NR),
+    likelihood(E, rain, P_E_R),
+    likelihood(E, no_rain, P_E_NR),
+    P_E is P_E_R * P_R + P_E_NR * P_NR.
+
+% Posterior P(H | E)
+posterior(H, E, P) :-
+    prior(H, P_H),
+    likelihood(E, H, P_E_H),
+    evidence(E, P_E),
+    P is (P_E_H * P_H) / P_E.
+
+% ----------- QUERY -----------
+
+predict :-
+    posterior(rain, cloudy, PR),
+    posterior(no_rain, cloudy, PNR),
+    write('P(Rain | Cloudy) = '), write(PR), nl,
+    write('P(No Rain | Cloudy) = '), write(PNR), nl.
+
+
+
+?- predict.
